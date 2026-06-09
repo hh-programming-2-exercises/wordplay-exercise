@@ -1,46 +1,44 @@
-> [!NOTE]  
-> The English translation for this exercise can be found in [this file](./readme.en.md).
+# Wordplay lesson assignment
 
-# Wordplay-tuntiharjoitus
+The purpose of this assignment is to familiarize yourself with various data structures and algorithms, particularly from the perspective of their performance. We will also touch on program performance testing and the concept of ["asymptotic computational complexity"](https://en.wikipedia.org/wiki/Asymptotic_computational_complexity).
 
-Tämän harjoituksen tarkoituksena on perehtyä erilaisiin tietorakenteisiin ja algoritmeihin erityisesti niiden suorituskyvyn näkökulmasta. Samassa sivuamme ohjelmien suorituskykytestausta ja ["asymptoottisen suoritusajan"](https://fi.wikipedia.org/wiki/Asymptoottinen_suoritusaika) käsitettä.
+In the first part of the assignment, we will explore the performance of Java lists. In the latter part, the application to be developed will utilize open name and dictionary data and search for Finnish first names that also have another meaning in the dictionary. Examples of such names are *Tuuli* (wind) and *Onni* (happiness).
 
-Harjoituksen ensimmäisessä osassa perehdytään Javan listojen suorituskykyyn. Jälkimmäisessä osassa kehitettävä sovellus hyödyntää avointa nimi- ja sanakirja-aineistoa ja etsii sellaisia suomenkielisiä etunimiä, joilla on nimen lisäksi myös jokin toinen merkitys sanakirjassa. Tällaisia nimiä ovat esimerkiksi *Tuuli* ja *Onni*.
+> [!IMPORTANT]
+> This assignment is not graded and it doesn't have any tests.
 
-💡 *Tätä harjoitusta ei erikseen palauteta eikä arvioida, joten sitä varten ei ole GitHub classroom -linkkiä. Voit luoda tehtävästä oman kopion joko "use this template"- tai "fork"-toiminnoilla.*
+## Data used in the assignment
 
+The Java programs in this assignment utilize several files that are in slightly different formats: the dictionary content is in plain text, while the name data is in CSV format.
 
-## Harjoituksessa käytettävä data
+The file [`kaikkisanat.txt`](./data/kaikkisanat.txt)  in the assignment package contains Finnish words in plain text in alphabetical order. The files [`etunimitilasto-naiset-ensimmainen.csv`](./data/etunimitilasto-naiset-ensimmainen.csv) and [`etunimitilasto-miehet-ensimmainen.csv`](./data/etunimitilasto-miehet-ensimmainen.csv) contain first names and their counts in [CSV format](https://en.wikipedia.org/wiki/Comma-separated_values).
 
-Tämän harjoituksen Java-ohjelmat hyödyntävät useita tiedostoja, jotka ovat hieman poikkeavissa muodoissa: sanakirjan sisältö on raakatekstinä, kun taas nimiaineisto on csv-muodossa.
+Information about file copyrights and terms of use can be found further down this page under "Copyrights".
 
-Tehtäväpaketin tiedosto [`kaikkisanat.txt`](./data/kaikkisanat.txt) sisältää suomenkielisiä sanoja raakatekstinä aakkosjärjestyksessä. Tiedostot [`etunimitilasto-naiset-ensimmainen.csv`](./data/etunimitilasto-naiset-ensimmainen.csv) sekä [`etunimitilasto-miehet-ensimmainen.csv`](./data/etunimitilasto-miehet-ensimmainen.csv) puolestaan sisältävät etunimiä sekä niiden lukumääriä [CSV-muodossa](https://fi.wikipedia.org/wiki/CSV).
+>[!NOTE]
+> All files for this assignment are saved with [`UTF-8` character encoding](https://en.wikipedia.org/wiki/UTF-8). `UTF-8` is [the most common character encoding](https://en.wikipedia.org/wiki/Popularity_of_text_encodings), but especially in a Windows environment, your system might use a different encoding. You can find more information about character encodings in [this article](https://www.baeldung.com/java-char-encoding).
 
-Tiedot tiedostojen tekijänoikeuksista ja käyttöehdoista löydät alempaa tältä sivulta kohdasta [Tekijänoikeudet](#tekijänoikeudet).
+## Part 1: performance testing of `ArrayList` and `LinkedList`
 
-💡 *Kaikki tämän harjoituksen tiedostot on tallennettu [`UTF-8`-merkistökoodauksella](https://en.wikipedia.org/wiki/UTF-8). `UTF-8` on [yleisin merkistökoodaus](https://en.wikipedia.org/wiki/Popularity_of_text_encodings), mutta erityisesti Windows-ympäristössä järjestelmäsi saattaa käyttää jotain muuta merkistöä. Lisätietoja merkistöistä löydät esimerkiksi [tästä artikkelista](https://www.baeldung.com/java-char-encoding).*
+In the package [`wordplay.benchmark`](./src/main/java/wordplay/benchmark/) of this repository, you can find the classes [`ArrayListBenchmark`](./src/main/java/wordplay/benchmark/ArrayListBenchmark.java) and [`LinkedListBenchmark`](./src/main/java/wordplay/benchmark/LinkedListBenchmark.java), which contain performance tests. The performance tests illustrate significant differences between `ArrayList` and `LinkedList` in terms of data retrieval, traversal, and insertion.
 
-
-## Osa 1: `ArrayList`:in ja `LinkedList`:in suorituskykytestaus
-
-Tämän repositorion paketista [`wordplay.benchmark`](./src/main/java/wordplay/benchmark/) löytyy luokat [`ArrayListBenchmark`](./src/main/java/wordplay/benchmark/ArrayListBenchmark.java) ja [`LinkedListBenchmark`](./src/main/java/wordplay/benchmark/LinkedListBenchmark.java), jotka sisältävät suorituskykytestejä. Suorituskykytestit havainnollistavat merkittäviä eroja `ArrayList`:in sekä `LinkedList`:in välillä tietoa haettaessa, läpikäytäessä ja lisättäessä.
-
-Suorituskykytestit on toteutettu [Java Microbenchmark Harness (JMH)](https://github.com/openjdk/jmh)-työkalulla:
+The performance tests are implemented using the [Java Microbenchmark Harness (JMH)](https://github.com/openjdk/jmh) tool:
 
 > *"JMH is a Java harness for building, running, and analysing nano/micro/milli/macro benchmarks written in Java and other languages targeting the JVM."*
 >
 > https://github.com/openjdk/jmh
 
-Suorita suorituskykytestit suorittamalla [`BenchmarkRunner`-luokka](./src/main/java/wordplay/benchmark/BenchmarkRunner.java) joko koodieditorillasi tai Gradlen avulla:
+Run the performance tests by executing the [`BenchmarkRunner`](./src/main/java/wordplay/benchmark/BenchmarkRunner.java) class either with your code editor or using Gradle:
 
 ```sh
 ./gradlew run      # unix
 .\gradlew.bat run  # windows
 ```
 
-💡 *Jos tulosteen erikoismerkit kuten &thickapprox; ja <sup>-4</sup> eivät näy kunnolla Windowsissa, voit kokeilla [vaihtaa terminaalin merkistöksi](https://www.google.com/search?q=chcp+65001) utf-8:n komennolla `chcp 65001`.*
+>[!TIP]
+> If special characters in the output, such as &thickapprox; and <sup>-4</sup>, do not display correctly on Windows, you can try [changing the terminal's encoding](https://www.google.com/search?q=chcp+65001) to UTF-8 with the command `chcp 65001`.
 
-`BenchmarkRunner` suorittaa joukon suorituskykytestejä ja tulostaa tietoa testien edistymisestä. Suorituskykytestit koostuvat sekä lämmittelyvaiheesta että testattavien metodien toistuvista kutsuista. Lämmittelyvaihe on tärkeä, jotta kaikki tarvittavat komponentit on saatu ladattua ja laitteistolta tarvittavat resurssit varattua ennen varsinaista mittausta. Testien tulos, eli eri metodien keskimääräinen suoritusaika, löytyvät raportin lopusta sen valmistuttua:
+`BenchmarkRunner` executes a series of performance tests and prints information about the progress of the tests. The performance tests consist of both a warm-up phase and repeated calls to the methods being tested. The warm-up phase is important to ensure that all necessary components are loaded and the required resources are allocated from the hardware before the actual measurement. The results of the tests, i.e., the average execution time of the different methods, can be found at the end of the report once it is completed:
 
 ```
 Benchmark                                              Mode  Cnt   Score    Error  Units
@@ -54,17 +52,16 @@ ArrayListBenchmark.addStringsToBeginningOfArrayList    avgt    5   0.426 ±  0.0
 LinkedListBenchmark.addStringsToBeginningOfLinkedList  avgt    5   0.001 ±  0.001   s/op
 ```
 
-Yllä *"avgt"* tarkoittaa *"average time"*. *"Cnt"* tarkoittaa suorituskertojen määrää ja *"score"* tarkoittaa testatun metodin yksittäisen suorituskerran keskimääräistä kestoa. *"s/op"* puolestaan on yksikkö, eli sekuntia per metodin suoritus. Tarkemman selityksen suoritetuista metodeista löydät seuraavista kappaleista.
+Above, *"avgt"* means *"average time"*. *"Cnt"* refers to the number of executions, and *"score"* indicates the average duration of a single execution of the tested method. *"s/op"* is the unit, meaning seconds per method execution. A more detailed explanation of the executed methods can be found in the following paragraphs.
 
+### Searching the list by index (*accessArrayListWithIndex* and *accessLinkedListWithIndex*)
 
-### Haku listalta indeksin avulla (*accessArrayListWithIndex* ja *accessLinkedListWithIndex*)
+In the classes [`ArrayListBenchmark`](./src/main/java/wordplay/benchmark/ArrayListBenchmark.java) and [`LinkedListBenchmark`](./src/main/java/wordplay/benchmark/LinkedListBenchmark.java), the same operations are tested with both `ArrayList` and `LinkedList` types of lists. In the initial methods, a Finnish word list is traversed from start to finish, and for each word, its `length()` method is called.
 
-Luokissa [`ArrayListBenchmark`](./src/main/java/wordplay/benchmark/ArrayListBenchmark.java) ja [`LinkedListBenchmark`](./src/main/java/wordplay/benchmark/LinkedListBenchmark.java) testataan samoja operaatioita sekä `ArrayList`- että `LinkedList`-tyyppisen listan kanssa. Ensimmäisissä metodeissa suomenkielinen sanalista käydään läpi alusta loppuun ja jokaisen sanan kohdalla kutsutaan sen `length()`-metodia.
-
-Suorituskykytestit on *annotoitu* `@Benchmark`-annotaatiolla, jonka avulla JMH-työkalu tietää niiden olevan suorituskykytestejä:
+The performance tests are *annotated* with the `@Benchmark` annotation, which allows the JMH tool to recognize them as performance tests:
 
 ```java
-ArrayList<String> arrayList = new ArrayList<>(finnishWords); // 93 086 sanaa
+ArrayList<String> arrayList = new ArrayList<>(finnishWords); // 93 086 words
 
 @Benchmark
 public void accessArrayListWithIndex() {
@@ -72,14 +69,14 @@ public void accessArrayListWithIndex() {
         arrayList.get(i).length();
     }
 
-    // metodin suoritusaika on keskimäärin 0,0001 sekuntia
+    // average execution time of the method is 0,0001 seconds
 }
 ```
 
-Yllä oleva [`ArrayList`-tyyppistä listaa hyödyntävä koodi](./src/main/java/wordplay/benchmark/ArrayListBenchmark.java) on lähes identtinen [alla olevan `LinkedList`-version kanssa](./src/main/java/wordplay/benchmark/LinkedListBenchmark.java):
+The above code [utilizing an `ArrayList` type list](./src/main/java/wordplay/benchmark/ArrayListBenchmark.java) is almost identical to the [below `LinkedList` version](./src/main/java/wordplay/benchmark/LinkedListBenchmark.java):
 
 ```java
-LinkedList<String> linkedList = new LinkedList<>(finnishWords); // 93 086 sanaa
+LinkedList<String> linkedList = new LinkedList<>(finnishWords); // 93 086 words
 
 @Benchmark
 public void accessLinkedListWithIndex() {
@@ -87,11 +84,11 @@ public void accessLinkedListWithIndex() {
         linkedList.get(i).length();
     }
 
-    // metodin suoritusaika on keskimäärin 2.792 sekuntia
+    // average execution time of the method is 2.792 seconds
 }
 ```
 
-Kuten testin tuloksista huomataan, koodi, jossa käydään [noin 93&nbsp;086 sanan pituinen aineisto](./data/kaikkisanat.txt) läpi yksi kerrallaan indeksien avulla vie `ArrayList`-listalta keskimäärin 10<sup>-4</sup> eli **0.0001 sekuntia**. `LinkedList`-tyyppiseltä listalta sama läpikäynti vie keskimäärin peräti **2.792 sekuntia**, eli **noin 30&nbsp;000 kertaa kauemmin**:
+As observed from the test results, the code that iterates through a dataset of [approximately 93,086 words](./data/kaikkisanat.txt) one by one using indices takes an average of 10<sup>-4</sup> or **0.0001 seconds** with an `ArrayList`. The same iteration with a `LinkedList` takes an average of **2.792 seconds**, which is **about 30,000 times longer**:
 
 ```
 Benchmark                                           Mode  Cnt   Score    Error  Units
@@ -99,44 +96,44 @@ ArrayListBenchmark.accessArrayListWithIndex         avgt    5  ≈ 10⁻⁴     
 LinkedListBenchmark.accessLinkedListWithIndex       avgt    5   2.792 ±  0.118   s/op
 ```
 
-`ArrayList`-tyyppisessä listassa tietyn arvon hakeminen indeksillä edellyttää vain yhden hakuoperaation, [koska se hyödyntää sisäisesti taulukkoa](https://github.com/openjdk/jdk/blob/6aa197667ad05bd93adf3afc7b06adbfb2b18a22/src/java.base/share/classes/java/util/ArrayList.java#L133-L139). Listan kaikkien arvojen läpikäynti edellyttää siis vain saman verran operaatioita, kuin listalla on pituutta:
+In an `ArrayList` type list, searching for a specific value by index requires only one lookup operation, [because it internally uses an array](https://github.com/openjdk/jdk/blob/6aa197667ad05bd93adf3afc7b06adbfb2b18a22/src/java.base/share/classes/java/util/ArrayList.java#L133-L139). Therefore, iterating through all the values in the list requires only as many operations as the length of the list:
 
 ```java
-// toistetaan listan pituuden verran (n kpl):
+// repeated as many times as the length of the list (n times):
 for (int i = 0; i < arrayList.size(); i++) {
 
-    // haku taulukosta vaatii vain 1 operaation
+    // search in an array only requires 1 operation
     arrayList.get(i);
 }
 
-// yhteensä siis tehdään n * 1 operaatiota: O(n)
+// in total, n * 1 operations are performed: O(n)
 ```
 
-`LinkedList`-tyyppisissä listoissa alkiot ovat "peräkkäin" ja yksittäisen arvon hakeminen keskeltä [edellyttää kaikkien sitä edeltävien arvojen läpikäyntiä joko alusta tai lopusta haluttuun indeksiin asti](https://github.com/openjdk/jdk/blob/6aa197667ad05bd93adf3afc7b06adbfb2b18a22/src/java.base/share/classes/java/util/LinkedList.java#L574-L591). Esimerkiksi indeksistä 10 hakeminen linkitetyltä listalta vaatii siis ensin "linkkien/solmujen" 0, 1, 2, ... 9 läpikäyntiä, olettaen, että lähdetään liikkeelle listan alusta.
+In `LinkedList` type lists, elements are "in sequence" and searching for a single value from the middle [requires traversing all preceding values either from the start or the end to the desired index](https://github.com/openjdk/jdk/blob/6aa197667ad05bd93adf3afc7b06adbfb2b18a22/src/java.base/share/classes/java/util/LinkedList.java#L574-L591). For example, searching from index 10 in a linked list requires first traversing through "links/nodes" 0, 1, 2, ... 9, assuming the traversal starts from the beginning of the list.
 
-Koska Javan linkitettyä listaa voidaan käydä läpi joko [alusta loppuun tai lopusta alkuun](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/LinkedList.html), on jokaisen listalla olevan indeksin keskimääräinen etäisyys lähtöpisteestä 1/4 listan pituudesta. Hakuoperaatio noin 90&nbsp;000 sanan pituiselta listaltamme vaatii siis keskimäärin noin 22&nbsp;500 "linkin/solmun" läpikäyntiä.
+Since Java's linked list can be traversed either [from start to end or from end to start](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/LinkedList.html), the average distance of each index from the starting point is 1/4 of the list's length. Therefore, a search operation on our list of approximately 90,000 words requires traversing an average of about 22,500 "links/nodes".
 
 ```java
-// listan pituuden (n) verran operaatioita:
+// operations equivalent to the length of the list (n):
 for (int i = 0; i < linkedList.size(); i++) {
 
-    // jokainen `get`-kutsu vaatii keskimäärin n/4 operaatiota:
+    // each `get` call requires an average of n/4 operations:
     linkedList.get(i);
 }
 
-// yhteensä siis tehdään noin n * n/4 operaatiota: O(n²)
+// in total, approximately n * n/4 operations are performed: O(n²)
 ```
 
-Suorituskykytesteissä ja tehokkuutta arvioitaessa mittaustarkkuus ei ole täydellinen, eikä siihen oikeastaan tarvitse edes pyrkiä. Oleellisempaa on ymmärtää, miten algoritmi suoriutuu suhteessa sen käsittelemän tietojoukon kokoon. Algoritmi, jonka suorittamien operaatioiden suhde tietojoukon kokoon on `n * n/4`, skaalautuu yhtä huonosti kuin algoritmi, jonka suhde on `n * n` eli <code>n<sup>2</sup></code>.
+When evaluating performance tests and efficiency, measurement accuracy is not perfect, nor does it need to be. What is more important is understanding how the algorithm performs relative to the size of the dataset it processes. An algorithm whose operations scale with the dataset size as `n * n/4` scales as poorly as an algorithm with a ratio of `n * n` or <code>n<sup>2</sup></code>.
 
-Operaatioiden kestot ja määrät eivät ole niin yksiselitteisiä kuin edellä on esitetty, mutta teorian ja suorituskykytestien perusteella vaikuttaa vahvasti siltä, että `LinkedList` suoriutui testistä tällä suomenkielisen sanalistan sisältävällä tietoaineistolla **kymmeniä tuhansia kertoja** hitaammin kuin `ArrayList`.
+The durations and counts of operations are not as straightforward as presented above, but based on theory and performance tests, it strongly appears that the `LinkedList` performed **tens of thousands of times** slower than the `ArrayList` in this test with the Finnish word list dataset.
 
-💡 *On myös tärkeää huomata, että aineiston määrän kasvaessa myös ero suorituskyvyssä kasvaa. Jos listassa olisi kymmenkertainen määrä alkioita, `ArrayList`:in läpikäynti veisi kymmenen kertaa enemmän aikaa. `LinkedList`:in läpikäynti puolestaan veisi arviolta sata kertaa enemmän aikaa, koska läpi käytäviä indeksejä olisi kymmenkertainen määrä. Lisäksi jokaista indeksiä kohden tehtävä `get(i)`-kutsu olisi myös keskimäärin kymmenen kertaa nykyistä hitaampi.*
+>[!NOTE] 
+> It is also important to note that as the dataset size increases, the performance difference also grows. If the list had ten times the number of elements, traversing the `ArrayList` would take ten times longer. Traversing the `LinkedList`, on the other hand, would take approximately a hundred times longer, because there would be ten times more indices to traverse. Additionally, each `get(i)` call for each index would also be, on average, ten times slower than it is currently.
 
+### Iterating a list (*accessArrayListWithIterator* and *accessLinkedListWithIterator*)
 
-### Listan iterointi (*accessArrayListWithIterator* ja *accessLinkedListWithIterator*)
-
-Samoissa suorituskykytestiluokissa [`ArrayListBenchmark`](./src/main/java/wordplay/benchmark/ArrayListBenchmark.java) ja [`LinkedListBenchmark`](./src/main/java/wordplay/benchmark/LinkedListBenchmark.java) on myös toiset testimetodit, joissa sekä `ArrayList`- että `LinkedList`-tyyppisten listojen arvot käydään läpi yksi kerrallaan *iteroimalla*:
+In the same performance test classes [`ArrayListBenchmark`](./src/main/java/wordplay/benchmark/ArrayListBenchmark.java) and [`LinkedListBenchmark`](./src/main/java/wordplay/benchmark/LinkedListBenchmark.java), there are also other test methods where the values of both `ArrayList` and `LinkedList` type lists are iterated through one by one using *iteration*:
 
 ```java
 ArrayList<String> arrayList = new ArrayList<>(finnishWords);
@@ -147,7 +144,7 @@ public void accessArrayListWithIterator() {
         word.length();
     }
 
-    // metodin suoritusaika on keskimäärin 0,0001 sekuntia
+    //average execution time of the method is 0,0001 seconds
 }
 ```
 
@@ -160,11 +157,11 @@ public void accessLinkedListWithIterator() {
         word.length();
     }
 
-    // metodin suoritusaika on keskimäärin 0,0001 sekuntia
+    //average execution time of the method is 0,0001 seconds
 }
 ```
 
-Tässä tapauksessa listojen suorituskyvyssä ei ole havaittavissa eroavaisuuksia suorituskykytestien perusteella. Molempien metodien suoritusaika on noin 10<sup>-4</sup> eli 0,0001 sekuntia:
+In this case, no differences in performance are observed between the lists based on the performance tests. The execution time for both methods is approximately 10<sup>-4</sup> or 0.0001 seconds:
 
 ```
 Benchmark                                           Mode  Cnt   Score    Error  Units
@@ -172,28 +169,28 @@ ArrayListBenchmark.accessArrayListWithIterator      avgt    5  ≈ 10⁻⁴     
 LinkedListBenchmark.accessLinkedListWithIterator    avgt    5  ≈ 10⁻⁴            s/op
 ```
 
-Tässä iterointiin perustuvassa ratkaisussa sama `LinkedList`-lista suoriutuu siis samasta tehtävästä noin 30&nbsp;000 kertaa paremmin kuin edellisessä indekseihin perustuvassa `get(i)`-ratkaisussa.
+In this iteration-based solution, the same `LinkedList` performs the same task approximately 30,000 times better than in the previous index-based `get(i)` solution.
 
-Parempi suorituskyky johtuu siitä, että seuraavan arvon hakeminen linkitetyltä listalta vaatii vain yhden operaation. Vaikka sekä indeksiin että iterointiin perustuvissa ratkaisuissa käytiin samat arvot läpi, `get(i)`-metodia käytettäessä jouduttiin tekemään valtavasti ylimääräistä työtä.
+The improved performance is due to the fact that fetching the next value from a linked list requires only one operation. Although the same values were traversed in both the index-based and iteration-based solutions, using the `get(i)` method required a significant amount of extra work.
 
-Sekä `ArrayList`:in että `LinkedList`:in suorituskyky on siis listaa iteroitaessa laskennallisesti sama:
+Therefore, the performance of both `ArrayList` and `LinkedList` is computationally the same when iterating through the list:
 
 ```java
-// n kappaletta sanoja, kukin vaatii vain yhden operaation:
+// n words, each requiring only one operation:
 for (String word : list) {
     word.length();
 }
 
-// Suorituskyky on O(n)
+// Performance is O(n)
 ```
 
-### Pohdittavaa
+### Considerations
 
-Vaikka `ArrayList` näyttää edellä esitettyjen tietojen valossa olevan ylivertainen `LinkedList`:iin verrattuna, ei asia ole suinkaan niin yksiselitteinen.
+Although `ArrayList` appears to be superior to `LinkedList` based on the information presented above, the situation is not so straightforward.
 
-`ArrayList` suoriutuu huonosti tilanteista, joissa listan alkuun tai keskelle lisätään arvoja. Tällaisissa tilanteissa kohdeindeksin jälkeiset arvot joudutaan [kopioimaan listan taustalla olevassa taulukossa eteenpäin](https://github.com/openjdk/jdk/blob/6aa197667ad05bd93adf3afc7b06adbfb2b18a22/src/java.base/share/classes/java/util/ArrayList.java#L501-L522), mikä tarkoittaa pahimmassa tapauksessa koko taulukon sisällön kopiointia yhden pykälän eteenpäin. Vastaavasti `ArrayList`:in taustalla olevan taulukon täyttyessä se joudutaan korvaamaan uudella, suuremmalla taulukolla, mikä on myös suorituskyvyn kannalta raskas operaatio. `LinkedList`-tyyppisten listojen kohdalla olemassa olevia arvoja ei jouduta siirtämään.
+`ArrayList` performs poorly in situations where values are added to the beginning or middle of the list. In such cases, the values following the target index need to be [copied forward in the underlying array](https://github.com/openjdk/jdk/blob/6aa197667ad05bd93adf3afc7b06adbfb2b18a22/src/java.base/share/classes/java/util/ArrayList.java#L501-L522), which can mean copying the entire array's contents one step forward in the worst case. Similarly, when the underlying array of an `ArrayList` becomes full, it needs to be replaced with a new, larger array, which is also a performance-intensive operation. In `LinkedList` type lists, existing values do not need to be moved.
 
-Tutustu itsenäisesti [`addStringsToBeginningOfArrayList`](./src/main/java/wordplay/benchmark/ArrayListBenchmark.java)- ja [`addStringsToBeginningOfLinkedList`](./src/main/java/wordplay/benchmark/LinkedListBenchmark.java)-metodien toteutukseen ja niiden suorituskykyyn.
+Explore the implementations and performance of the [`addStringsToBeginningOfArrayList`](./src/main/java/wordplay/benchmark/ArrayListBenchmark.java) and [`addStringsToBeginningOfLinkedList`](./src/main/java/wordplay/benchmark/LinkedListBenchmark.java) methods independently.
 
 ```
 Benchmark                                              Mode  Cnt   Score    Error  Units
@@ -201,12 +198,12 @@ ArrayListBenchmark.addStringsToBeginningOfArrayList    avgt    5   0.426 ±  0.0
 LinkedListBenchmark.addStringsToBeginningOfLinkedList  avgt    5   0.001 ±  0.001   s/op
 ```
 
-🚀 *Voit halutessasi kirjoittaa lisää suorituskykytestejä, joissa kokeilet erilaisia tapauksia, joissa eri tyyppiset kokoelmat suoriutuvat eri tavoin.*
+>[!NOTE]
+> You can also write additional performance tests if you wish, experimenting with different cases where various types of collections perform differently.
 
+## Part 2: Coding Task
 
-## Osa 2: Koodaustehtävä
-
-Tässä Git-repositoriossa on tiedosto [kaikkisanat.txt](./data/kaikkisanat.txt), joka sisältää [Kotimaisten kielten keskuksen nykysuomen sanalistan](https://kaino.kotus.fi/sanat/nykysuomi/):
+In this Git repository, there is a file [kaikkisanat.txt](./data/kaikkisanat.txt), which contains the [Modern Finnish word list from the Institute for the Languages of Finland](https://kaino.kotus.fi/sanat/nykysuomi/):
 
 ```
 aakkonen
@@ -216,7 +213,7 @@ aakkosellisuus
 ...
 ```
 
-Repositorio sisältää myös tiedostot [etunimitilasto-naiset-ensimmainen.csv](./data/etunimitilasto-naiset-ensimmainen.csv) sekä [etunimitilasto-miehet-ensimmainen.csv](./data/etunimitilasto-miehet-ensimmainen.csv), joista löytyy [Digi- ja väestötietoviraston nimiaineistoissa](https://www.avoindata.fi/data/fi/organization/digi_ja_vaestotietovirasto) esiintyvät etunimet sekä niitä vastaavat lukumäärät:
+The repository also contains the files [etunimitilasto-naiset-ensimmainen.csv](./data/etunimitilasto-naiset-ensimmainen.csv) and [etunimitilasto-miehet-ensimmainen.csv](./data/etunimitilasto-miehet-ensimmainen.csv), which include the first names and their corresponding counts found in the name data from the [Digital and Population Data Services Agency](https://www.avoindata.fi/data/fi/organization/digi_ja_vaestotietovirasto):
 
 ```
 Etunimi;Lukumäärä
@@ -228,12 +225,11 @@ Leena;27 745
 ...
 ```
 
-Näiden tiedostojen lukemiseksi on olemassa valmiit metodit [`NamesReader.readFirstNames()`](./src/main/java/wordplay/io/NamesReader.java) sekä [`DictionaryReader.readFinnishWords()`](./src/main/java/wordplay/io/DictionaryReader.java), jotka palauttavat tiedostojen sisällöt listoina.
+To read these files, there are ready-made methods [`NamesReader.readFirstNames()`](./src/main/java/wordplay/io/NamesReader.java) and [`DictionaryReader.readFinnishWords()`](./src/main/java/wordplay/io/DictionaryReader.java), which return the contents of the files as lists.
 
+### Program structure
 
-### Ohjelman rakenne
-
-Koska tiedostoja on kahta eri tyyppiä, projektiin on toteutettu kaksi erillistä luokkaa niiden lukemiseksi: [DictionaryReader](./src/main/java/wordplay/io/DictionaryReader.java) ja [NamesReader](./src/main/java/wordplay/io/NamesReader.java). Molemmat luokat toteuttavat [WordplayReader](./src/main/java/wordplay/io/WordplayReader.java)-rajapinnan, jossa on määritettynä `readFile`-metodi:
+Since there are two different types of files, the project has implemented two separate classes for reading them: [DictionaryReader](./src/main/java/wordplay/io/DictionaryReader.java) and [NamesReader](./src/main/java/wordplay/io/NamesReader.java). Both classes implement the [WordplayReader](./src/main/java/wordplay/io/WordplayReader.java) interface, which defines the `readFile` method:
 
 ```mermaid
 classDiagram
@@ -263,62 +259,49 @@ classDiagram
     NamesReader --> WordplayReader : implements
 ```
 
-Yhteisen `readFile`-metodin lisäksi `NamesReader`- ja `DictionaryReader`-luokilla on omat apumetodit juuri niiden käsittelemien tiedostojen lukemiseksi:
+In addition to the common `readFile` method, the `NamesReader` and `DictionaryReader` classes have their own helper methods specifically for reading the files they handle:
 
 ```java
 List<String> finnishNames = NamesReader.readFirstNames();
 List<String> finnishWords = DictionaryReader.readFinnishWords();
 ```
 
-Sinun ei tarvitse toteuttaa tiedostojen käsittelyä itse, vaan voit hyödyntää edellä mainittuja metodeita.
+You do not need to implement file handling yourself; you can utilize the aforementioned methods.
 
+### `NamesInDictionary` class
 
-### [`NamesInDictionary`-luokka](./src/main/java/wordplay/NamesInDictionary.java)
+In this task, you need to complete the `main` method in the [`NamesInDictionary`](./src/main/java/wordplay/NamesInDictionary.java) class to iterate through both datasets introduced earlier and **print out Finnish names that are also found in the dictionary**. You should not print names that are only part of a longer word. For example, the name *Antti* appears in words like "elef*antti*" and "deodor*antti*", but not on its own.
 
-Tässä tehtävässä sinun tulee täydentää [`NamesInDictionary`-luokkaan](./src/main/java/wordplay/NamesInDictionary.java) `main`-metodi, joka käy molemmat edellää esitellyt aineistot läpi ja **tulostaa sellaiset suomenkieliset nimet, jotka löytyvät myös sanakirjasta**. Et saa tulostaa nimiä, jotka löytyvät ainoastaan osana jotain pidempää sanaa. Esimerkiksi nimi *Antti* löytyy osana sanoja kuten "elef*antti*" ja "deodor*antti*", mutta ei yksinään.
+You can implement your solution using a loop structure and the list's `contains()` method. Alternatively, the task can also be solved with two nested loops and the `equalsIgnoreCase` method. Regardless of the approach you choose, the solution will likely be quite slow, as for each name (`n=15,665`), you need to go through all the words in the word list (`m=93,086`). This solution would require `n * m` operations, which means a total of 1,458,192,190 comparison operations with these datasets.
 
-Voit toteuttaa ratkaisusi esimerkiksi toistorakenteella sekä listan `contains()`-metodilla. Vaihtoehtoisesti tehtävän voi ratkaista myös kahdella sisäkkäisellä toistolla ja `equalsIgnoreCase`-metodilla. Riippumatta kumman lähestymistavan valitset, tulee ratkaisu todennäköisesti olemaan melko hidas, koska jokaista nimeä (`n=15 665`) kohden joudutaan käymään läpi kaikki sanalistan sanat (`m=93 086`). Tämä ratkaisu vaatisi siis `n * m` operaatiota, joka tarkoittaa näiden aineistojen kanssa peräti 1&nbsp;458&nbsp;192&nbsp;190 vertailuoperaatiota.
+Even if your computer is powerful, a ["brute force"](https://en.wikipedia.org/wiki/Brute-force_search) solution that iterates through the lists and compares all words will likely take several seconds.
 
-Vaikka tietokoneesi olisi tehokas, vie listoja läpikäyvä ja kaikkia sanoja vertaileva ["brute force"](https://en.wikipedia.org/wiki/Brute-force_search)-ratkaisu todennäköisesti useita sekunteja.
+Using the `HashMap` data structure covered in the course as part of this solution might be beneficial. You can also explore the [`HashSet`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashSet.html) data structure, which operates similarly to `HashMap`, but stores only individual values instead of key-value pairs. The list's `contains()` method requires traversing the entire list, whereas `HashMap`'s `containsKey` requires only one operation ([baeldung.com](https://www.baeldung.com/java-treemap-vs-hashmap)).
 
-Kurssilla käsitellyn `HashMap`-tietorakenteen käyttäminen osana tätä ratkaisua voi olla kannattavaa. Voit tutustaua myös [`HashSet`-tietorakenteeseen](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashSet.html), jonka toimintaperiaate on samankaltainen kuin `HashMap`:illa, mutta avain-arvo-parien sijasta siihen tallennetaan vain yksittäisiä arvoja. Listan `contains()`-metodi vaatii koko listan läpikäynnin, kun taas `HashMap`:in `containsKey` vaatii vain yhden operaation ([baeldung.com](https://www.baeldung.com/java-treemap-vs-hashmap)).
+>[!NOTE]
+> If your program produces the correct solution in tenths of a second, it is likely efficiently implemented.
 
-⏱ *Jos ohjelmasi tuottaa oikean ratkaisun sekunnin kymmenesosissa, on se todennäköisesti tehokkaasti toteutettu.*
+>[!NOTE]
+> Note that the case of letters in names and dictionary words is not the same. For example, in the name file, `"Tuuli"` is written with an uppercase initial letter, while in the dictionary it is written in lowercase `"tuuli"`.
 
-💡 *Huomaa, että nimien ja sanakirjan sanojen kirjainkoko ei ole sama. Nimitiedostossa esimerkiksi `"Tuuli"` on kirjoitettu isolla alkukirjaimella, kun sanakirjassa se on kirjoitettu pienellä `"tuuli"`.*
+### Correct solution
 
+Information about the number of names found in the word list can be found in the accompanying file [solution.md](./solution.md).
 
-### Oikea ratkaisu
+# Copyrights
 
-Tieto sanalistasta löytyvien nimien määrästä löytyy oheisesta tiedostosta [ratkaisu.md](./ratkaisu.md).
+## Modern Finnish word list from the Institute for the Languages of Finland
 
+The exercise utilizes the [Modern Finnish word list from the Institute for the Languages of Finland](https://kaino.kotus.fi/sanat/nykysuomi/), which is licensed under the [GNU LGPL license](http://www.gnu.org/licenses/lgpl.html), the [EUPL v.1.1 license](http://joinup.ec.europa.eu/software/page/eupl/licence-eupl), and the [Creative Commons Attribution 3.0 license](http://creativecommons.org/licenses/by/3.0/deed.fi).
 
-# Tekijänoikeudet
+The modified version used in the exercise, where the words are in plain text instead of XML, is borrowed from [Hugo van Kemenade's](https://github.com/hugovk) GitHub project [Every Finnish Word](https://github.com/hugovk/everyfinnishword).
 
-## Kotimaisten kielten keskuksen nykysuomen sanalista
+## Name data from the Finnish Population Information System
 
-Harjoituksessa hyödynnetään [Kotimaisten kielten keskuksen nykysuomen sanalistaa](https://kaino.kotus.fi/sanat/nykysuomi/):
+[The Digital and Population Data Services Agency (DVV)](https://www.avoindata.fi/data/fi/organization/digi_ja_vaestotietovirasto) has published the dataset [Finnish Population Information System name data](https://www.avoindata.fi/data/fi/dataset/none) under the [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
 
-> *"Kotimaisten kielten keskus julkaisee taivutustiedoin täydennetyn nykysuomen sanalistan. Sanalista ei ole tyhjentävä tai auktoritatiivinen luettelo suomen kielen sanoista, vaan sen on tarkoitus mm. toimia apuvälineenä suomen kieltä käsittelevien tietokoneohjelmien ja suomenkielisten käyttöliittymien kehitystyössä. Sanalista perustuu pääosin CD-Perussanakirjan sanastoon."*
->
-> *"Sanalista julkaistaan lisensseillä GNU LGPL (Lesser General Public License), EUPL v.1.1 (Euroopan unionin yleinen lisenssi) ja CC Nimeä 3.0."*
->
->  Kotimaisten kielten keskus. Kotimaisten kielten keskuksen nykysuomen sanalista. https://kaino.kotus.fi/sanat/nykysuomi/
+## This exercise
 
-[GNU LGPL -lisenssi](http://www.gnu.org/licenses/lgpl.html), [EUPL v.1.1 -lisenssi](http://joinup.ec.europa.eu/software/page/eupl/licence-eupl), [Creative Commons Nimeä 3.0 -lisenssi](http://creativecommons.org/licenses/by/3.0/deed.fi)
+This exercise is made by Teemu Havulinna and translated to English by Kalle Ilves and it is licensed under a [Creative Commons BY-NC-SA license](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
-Harjoituksessa hyödynnetty muokattu versio, jossa XML:n sijasta sanat ovat raakatekstinä, on lainattu [Hugo van Kemenaden](https://github.com/hugovk) GitHub-projektista [Every Finnish Word](https://github.com/hugovk/everyfinnishword).
-
-
-## Väestötietojärjestelmän suomalaisten nimiaineistot
-
-> *"[Digi- ja väestötietovirasto (DVV)](https://www.avoindata.fi/data/fi/organization/digi_ja_vaestotietovirasto) on julkaissut tietoaineiston [Väestötietojärjestelmän suomalaisten nimiaineistot](https://www.avoindata.fi/data/fi/dataset/none) lisenssillä [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).*"
->
-> Väestötietojärjestelmän suomalaisten nimiaineistot. https://www.avoindata.fi/data/fi/dataset/none
-
-
-## Tämä harjoitus
-
-Tämän harjoituksen on kehittänyt Teemu Havulinna ja se on lisensoitu [Creative Commons BY-NC-SA -lisenssillä](https://creativecommons.org/licenses/by-nc-sa/4.0/).
-
-Harjoituksenannon, käsiteltävien tiedostojen sekä lähdekoodien toteutuksessa on hyödynnetty ChatGPT 3.5:ttä sekä GitHub copilot -tekoälyavustinta.
+ChatGPT 3.5 language model and GitHub copilot AI assistant has been used to implement the exercise.
